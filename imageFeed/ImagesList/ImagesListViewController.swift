@@ -8,6 +8,7 @@
 import UIKit
 
 final class ImagesListViewController: UIViewController {
+    private let showSingleImageSegueIdentifier = "ShowSingleImage"
     private let currentDate = Date()
     @IBOutlet private var tableView: UITableView!
 
@@ -27,6 +28,23 @@ final class ImagesListViewController: UIViewController {
 
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+            if segue.identifier == showSingleImageSegueIdentifier { // 1
+                guard
+                    let viewController = segue.destination as? SingleImageViewController, // 2
+                    let indexPath = sender as? IndexPath // 3
+                else {
+                    assertionFailure("Invalid segue destination") // 4
+                    return
+                }
+
+                let image = UIImage(named: photosName[indexPath.row]) // 5
+                viewController.image = image// 6
+            } else {
+                super.prepare(for: segue, sender: sender) // 7
+            }
+        }
 }
 
 // MARK: - UITableViewDataSource
@@ -37,13 +55,12 @@ extension ImagesListViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let imageListCell = tableView.dequeueReusableCell(
-                   withIdentifier: ImagesListCell.reuseIdentifier,
-                   for: indexPath
-               ) as? ImagesListCell else {
-                   return UITableViewCell()
-               }
+        let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath)
 
+        guard let imageListCell = cell as? ImagesListCell else {
+            return UITableViewCell()
+        }
+        
         configCell(for: imageListCell, with: indexPath)
 
         return imageListCell
@@ -71,7 +88,7 @@ extension ImagesListViewController {
 
 extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // TODO: - Добавить логику при нажатии на ячейку
+        performSegue(withIdentifier: showSingleImageSegueIdentifier, sender: indexPath)
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
