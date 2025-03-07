@@ -68,9 +68,9 @@ final class ProfileViewController: UIViewController {
             button.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
+    
+    @objc func didTapButton() {
         
-        @objc func didTapButton() {
-            
         
     }
 }
