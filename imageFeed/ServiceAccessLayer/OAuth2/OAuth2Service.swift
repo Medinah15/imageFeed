@@ -77,12 +77,12 @@ final class OAuth2Service {
         
         guard let url = URL(
             string: "/oauth/token"
-            + "?client_id=\(WebViewConstants.accessKey)"
-            + "&client_secret=\(WebViewConstants.secretKey)"
-            + "&redirect_uri=\(WebViewConstants.redirectURI)"
+            + "?client_id=\(Constants.accessKey)"
+            + "&client_secret=\(Constants.secretKey)"
+            + "&redirect_uri=\(Constants.redirectURI)"
             + "&code=\(code)"
             + "&grant_type=authorization_code",
-            relativeTo: WebViewConstants.baseURL
+            relativeTo: baseURL
         ) else {
             print("❌ Ошибка: не удалось создать URL для OAuth запроса")
             return nil
