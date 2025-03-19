@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8B010D1A2D8B45690040A4FC /* UIBlockingProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B010D192D8B45690040A4FC /* UIBlockingProgressHUD.swift */; };
 		8B0B7FC32D57EF7D002541CA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8B713F052D366CED0012AC23 /* Main.storyboard */; };
 		8B470F352D47CE3F008D8A07 /* ImagesListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B470F342D47CE3F008D8A07 /* ImagesListCell.swift */; };
 		8B470F412D55E93B008D8A07 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B470F402D55E93B008D8A07 /* ProfileViewController.swift */; };
@@ -29,6 +30,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8B010D192D8B45690040A4FC /* UIBlockingProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBlockingProgressHUD.swift; sourceTree = "<group>"; };
 		8B470F342D47CE3F008D8A07 /* ImagesListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListCell.swift; sourceTree = "<group>"; };
 		8B470F402D55E93B008D8A07 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		8B4F42382D5CF47600FF5892 /* SingleImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleImageViewController.swift; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 				8B713EFF2D366CED0012AC23 /* AppDelegate.swift */,
 				8B713F012D366CED0012AC23 /* SceneDelegate.swift */,
 				8BEF23422D6721F1004CDD81 /* Constants.swift */,
+				8B010D192D8B45690040A4FC /* UIBlockingProgressHUD.swift */,
 				8BD1361C2D79686E00ED0B4B /* SingleImageVieww */,
 				8BEF23462D673C46004CDD81 /* Auth */,
 				8BD1361A2D79675F00ED0B4B /* SplashViewController */,
@@ -242,6 +245,7 @@
 				8BD136182D79672E00ED0B4B /* SplashViewController.swift in Sources */,
 				8BEF23452D673C1F004CDD81 /* AuthViewController.swift in Sources */,
 				8BEF23432D6721F1004CDD81 /* Constants.swift in Sources */,
+				8B010D1A2D8B45690040A4FC /* UIBlockingProgressHUD.swift in Sources */,
 				8B4F42392D5CF47600FF5892 /* SingleImageViewController.swift in Sources */,
 				8BF5ABE42D76B6B20055C2AB /* URLSession+data.swift in Sources */,
 				8BEF23482D673D07004CDD81 /* WebViewViewController.swift in Sources */,
