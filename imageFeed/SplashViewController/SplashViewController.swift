@@ -71,17 +71,7 @@ extension SplashViewController {
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
         dismiss(animated: true) { [weak self] in
-            guard let self = self else { return }
-            
-            self.oauth2Service.fetchOAuthToken(code) { result in
-                switch result {
-                case .success:
-                    print("✅ Авторизация успешна, переходим на главный экран")
-                    self.switchToTabBarController() // ✅ Переносим вызов сюда
-                case .failure(let error):
-                    print("❌ Ошибка авторизации: \(error.localizedDescription)")
-                }
-            }
+            self?.switchToTabBarController()
         }
     }
 }

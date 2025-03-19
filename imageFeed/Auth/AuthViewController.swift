@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import ProgressHUD
 
 protocol AuthViewControllerDelegate: AnyObject {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String)
@@ -47,11 +48,25 @@ final class AuthViewController: UIViewController {
 // MARK: - WebViewViewControllerDelegate
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        vc.dismiss(animated: true)
         
-        delegate?.authViewController(self, didAuthenticateWithCode: code)
+        ProgressHUD.animate()
+        oauth2Service.fetchOAuthToken(code) { [weak self] result in
+            DispatchQueue.main.async {
+                
+                ProgressHUD.dismiss()
+                
+                switch result {
+                case .success(let token):
+                    print("✅ Авторизация успешна, токен: \(token)")
+                    if let self = self {
+                        self.delegate?.authViewController(self, didAuthenticateWithCode: token)
+                    }
+                case .failure(let error):
+                    print("❌ Ошибка авторизации: \(error.localizedDescription)")
+                }
+            }
+        }
     }
-    
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
         vc.dismiss(animated: true)
     }
