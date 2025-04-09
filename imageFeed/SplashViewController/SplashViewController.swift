@@ -3,7 +3,6 @@
 //  imageFeed
 //
 //  Created by Medina Huseynova on 06.03.25.
-//
 
 import UIKit
 
@@ -19,9 +18,8 @@ final class SplashViewController: UIViewController {
         super.viewDidAppear(animated)
         
         if let token = oauth2TokenStorage.token {
-            switchToTabBarController()
+            fetchProfile(token)
         } else {
-            // Show Auth Screen
             performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: nil)
         }
     }
@@ -36,8 +34,24 @@ final class SplashViewController: UIViewController {
     }
     
     // MARK: - Private Methods
+    private func fetchProfile(_ token: String) {
+        UIBlockingProgressHUD.show()
+        ProfileService.shared.fetchProfile(token) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            
+            guard let self = self else { return }
+            
+            switch result {
+            case .success:
+                self.switchToTabBarController()
+            case .failure:
+                // Здесь покажите ошибку получения профиля
+                break
+            }
+        }
+    }
+    
     private func switchToTabBarController() {
-        // Получаем экземпляр `window` приложения
         guard let window = UIApplication.shared.windows.first else {
             assertionFailure("Invalid window configuration")
             return
@@ -49,6 +63,7 @@ final class SplashViewController: UIViewController {
         window.rootViewController = tabBarController
     }
 }
+
 
 // MARK: - Navigation
 extension SplashViewController {
@@ -62,7 +77,6 @@ extension SplashViewController {
             return
         }
         
-        // Установим делегатом контроллера наш SplashViewController
         viewController.delegate = self
     }
 }
@@ -71,8 +85,10 @@ extension SplashViewController {
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
         dismiss(animated: true) { [weak self] in
-            self?.switchToTabBarController()
+            guard let self = self else { return }
+            self.fetchProfile(code) // Отправляем запрос после авторизации
         }
     }
 }
+
 

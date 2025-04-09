@@ -3,7 +3,6 @@
 //  imageFeed
 //
 //  Created by Medina Huseynova on 27.01.25.
-//
 
 import UIKit
 

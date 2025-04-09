@@ -3,15 +3,29 @@
 //  imageFeed
 //
 //  Created by Medina Huseynova on 07.02.25.
-//
 
 import UIKit
 
 final class ProfileViewController: UIViewController {
     
+    // MARK: - UI Elements
+    private let imageView = UIImageView()
+    private let label1 = UILabel()
+    private let label2 = UILabel()
+    private let label3 = UILabel()
+    private let button = UIButton()
+    
+    private let profileService = ProfileService.shared
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setupUI()
+        updateProfileDetails(profile: profileService.profile)
+    }
+    
+    // MARK: - Setup UI
+    private func setupUI() {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "avatar")
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -58,7 +72,7 @@ final class ProfileViewController: UIViewController {
         
         let button = UIButton()
         button.setImage(UIImage(named: "logout_button"), for: .normal)
-        button.addTarget(self, action: #selector(didTapButton), for: .touchUpInside) 
+        button.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(button)
         NSLayoutConstraint.activate([
@@ -69,8 +83,20 @@ final class ProfileViewController: UIViewController {
         ])
     }
     
+    // MARK: - Update Profile Details
+    private func updateProfileDetails(profile: Profile?) {
+            guard let profile = profile else {
+                print("❌ Профиль не найден")
+                return
+            }
+            
+            label1.text = profile.name
+            label2.text = profile.loginName
+            label3.text = profile.bio
+        }
+    
     @objc func didTapButton() {
-        
-        
+        print("Выход из профиля")
     }
 }
+

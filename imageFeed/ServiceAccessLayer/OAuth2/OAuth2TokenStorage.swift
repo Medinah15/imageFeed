@@ -3,7 +3,6 @@
 //  imageFeed
 //
 //  Created by Medina Huseynova on 06.03.25.
-//
 
 import Foundation
 
@@ -19,4 +18,3 @@ final class OAuth2TokenStorage {
         }
     }
 }
-

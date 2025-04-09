@@ -3,7 +3,6 @@
 //  imageFeed
 //
 //  Created by Medina Huseynova on 04.03.25.
-//
 
 import Foundation
 
@@ -17,36 +16,32 @@ final class OAuth2Service {
     // MARK: - Singleton
     static let shared = OAuth2Service()
     private let storage = OAuth2TokenStorage()
-    private let urlSession = URLSession.shared             // 1
-    private var task: URLSessionTask?                      // 2
-    private var lastCode: String?                          // 3
+    private let urlSession = URLSession.shared
+    private var task: URLSessionTask?
+    private var lastCode: String?
     private init() {}
     
     // MARK: - Public Methods
     func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
-        assert(Thread.isMainThread)  // Проверяем, что код выполняется на главном потоке
+        assert(Thread.isMainThread)
         
-        // Не разрешаем повторные запросы с одинаковым кодом
-        guard lastCode != code else {  // 1
+        guard lastCode != code else {
             completion(.failure(AuthServiceError.invalidRequest))
             return
         }
         
-        // Отменяем текущую задачу перед запуском новой
-        task?.cancel()  // 2
+        task?.cancel()
         lastCode = code
         
-        // Создаём запрос для получения токена
-        guard let request = makeOAuthTokenRequest(code: code) else {  // 11
+        guard let request = makeOAuthTokenRequest(code: code) else {
             completion(.failure(AuthServiceError.invalidRequest))
             return
         }
-
-        // Запускаем задачу для выполнения запроса
+        
         let task = urlSession.dataTask(with: request) { [weak self] data, response, error in
-            DispatchQueue.main.async {  // 12
-                self?.task = nil  // 14
-                self?.lastCode = nil  // 15
+            DispatchQueue.main.async {
+                self?.task = nil
+                self?.lastCode = nil
                 
                 if let error = error {
                     print("❌ Ошибка сети: \(error.localizedDescription)")
@@ -73,7 +68,6 @@ final class OAuth2Service {
                 }
                 
                 do {
-                    // Используем кастомный декодер с настроенным convertFromSnakeCase
                     let decoder = SnakeCaseJSONDecoder()
                     let response = try decoder.decode(OAuthTokenResponseBody.self, from: data)
                     let token = response.accessToken
@@ -87,20 +81,20 @@ final class OAuth2Service {
             }
         }
         
-        self.task = task  // 16
-        task.resume()     // 17
+        self.task = task
+        task.resume()
     }
     
     // MARK: - Private Methods
-    private func makeOAuthTokenRequest(code: String) -> URLRequest? {  // 18
+    private func makeOAuthTokenRequest(code: String) -> URLRequest? {
         guard let url = URL(string: "https://unsplash.com/oauth/token"
-            + "?client_id=\(Constants.accessKey)"
-            + "&client_secret=\(Constants.secretKey)"
-            + "&redirect_uri=\(Constants.redirectURI)"
-            + "&code=\(code)"
-            + "&grant_type=authorization_code") else {
-                assertionFailure("Не удалось создать URL")
-                return nil
+                            + "?client_id=\(Constants.accessKey)"
+                            + "&client_secret=\(Constants.secretKey)"
+                            + "&redirect_uri=\(Constants.redirectURI)"
+                            + "&code=\(code)"
+                            + "&grant_type=authorization_code") else {
+            assertionFailure("Не удалось создать URL")
+            return nil
         }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"

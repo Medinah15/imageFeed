@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8B010D1A2D8B45690040A4FC /* UIBlockingProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B010D192D8B45690040A4FC /* UIBlockingProgressHUD.swift */; };
+		8B010D262DA4F2120040A4FC /* ProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B010D252DA4F2120040A4FC /* ProfileService.swift */; };
 		8B0B7FC32D57EF7D002541CA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8B713F052D366CED0012AC23 /* Main.storyboard */; };
 		8B470F352D47CE3F008D8A07 /* ImagesListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B470F342D47CE3F008D8A07 /* ImagesListCell.swift */; };
 		8B470F412D55E93B008D8A07 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B470F402D55E93B008D8A07 /* ProfileViewController.swift */; };
@@ -31,6 +32,7 @@
 
 /* Begin PBXFileReference section */
 		8B010D192D8B45690040A4FC /* UIBlockingProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBlockingProgressHUD.swift; sourceTree = "<group>"; };
+		8B010D252DA4F2120040A4FC /* ProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileService.swift; sourceTree = "<group>"; };
 		8B470F342D47CE3F008D8A07 /* ImagesListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListCell.swift; sourceTree = "<group>"; };
 		8B470F402D55E93B008D8A07 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		8B4F42382D5CF47600FF5892 /* SingleImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleImageViewController.swift; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 			isa = PBXGroup;
 			children = (
 				8B470F402D55E93B008D8A07 /* ProfileViewController.swift */,
+				8B010D252DA4F2120040A4FC /* ProfileService.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -238,6 +241,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8B713F042D366CED0012AC23 /* ImagesListViewController.swift in Sources */,
+				8B010D262DA4F2120040A4FC /* ProfileService.swift in Sources */,
 				8B470F352D47CE3F008D8A07 /* ImagesListCell.swift in Sources */,
 				8BD136132D78E96E00ED0B4B /* OAuthTokenResponseBody.swift in Sources */,
 				8B470F412D55E93B008D8A07 /* ProfileViewController.swift in Sources */,
