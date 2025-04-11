@@ -23,43 +23,18 @@ final class ProfileService {
             return
         }
         
-        let task = urlSession.dataTask(with: request) { [weak self] data, response, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    print("❌ Ошибка сети: \(error.localizedDescription)")
-                    completion(.failure(error))
-                    return
-                }
-                
-                guard let httpResponse = response as? HTTPURLResponse else {
-                    print("❌ Ошибка: некорректный ответ от сервера")
-                    completion(.failure(NSError(domain: "ProfileService", code: -2, userInfo: [NSLocalizedDescriptionKey: "Некорректный ответ от сервера"])))
-                    return
-                }
-                
-                guard (200...299).contains(httpResponse.statusCode) else {
-                    print("❌ Ошибка: сервер вернул код ответа \(httpResponse.statusCode)")
-                    completion(.failure(NSError(domain: "ProfileService", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "Ошибка сервера"])))
-                    return
-                }
-                
-                guard let data = data else {
-                    print("❌ Ошибка: пустой ответ от сервера")
-                    completion(.failure(NSError(domain: "ProfileService", code: -3, userInfo: [NSLocalizedDescriptionKey: "Пустой ответ от сервера"])))
-                    return
-                }
-                
-                do {
-                    let decoder = JSONDecoder()
-                    let profileResult = try decoder.decode(ProfileResult.self, from: data)
-                    let profile = Profile(from: profileResult)
-                    completion(.success(profile))
-                } catch {
-                    print("❌ Ошибка декодирования JSON: \(error.localizedDescription)")
-                    completion(.failure(error))
-                }
+        let task = urlSession.objectTask(for: request) { [weak self] (result: Result<ProfileResult, Error>) in
+            switch result {
+            case .success(let profileResult):
+                let profile = Profile(from: profileResult)
+                self?.profile = profile
+                completion(.success(profile))
+            case .failure(let error):
+                print("❌ Ошибка при получении профиля: \(error.localizedDescription)")
+                completion(.failure(error))
             }
         }
+
         
         task.resume()
     }

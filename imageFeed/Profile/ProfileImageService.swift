@@ -37,36 +37,23 @@ final class ProfileImageService {
         
         let request = makeRequest(for: username, token: token)
         
-        let task = urlSession.dataTask(with: request) { [weak self] data, response, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    completion(.failure(error))
-                    return
-                }
-                
-                guard let data = data else {
-                    completion(.failure(ProfileImageServiceError.invalidResponse))
-                    return
-                }
-                
-                do {
-                    let decoder = JSONDecoder()
-                    let userResult = try decoder.decode(UserResult.self, from: data)
-                    let smallImageURL = userResult.profileImage.small
-                    self?.avatarURL = smallImageURL
-                    completion(.success(smallImageURL))
-                    
-                    NotificationCenter.default.post(
-                                            name: ProfileImageService.didChangeNotification,
-                                            object: self,
-                                            userInfo: ["URL": smallImageURL]
-                                        )
-                    
-                } catch {
-                    completion(.failure(error))
-                }
+        let task = urlSession.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
+            switch result {
+            case .success(let userResult):
+                let imageURL = userResult.profileImage.small
+                self?.avatarURL = imageURL
+                completion(.success(imageURL))
+
+                NotificationCenter.default.post(
+                    name: ProfileImageService.didChangeNotification,
+                    object: self,
+                    userInfo: ["URL": imageURL]
+                )
+            case .failure(let error):
+                completion(.failure(error))
             }
         }
+
         
         self.currentTask = task
         task.resume()

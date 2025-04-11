@@ -38,53 +38,25 @@ final class OAuth2Service {
             return
         }
         
-        let task = urlSession.dataTask(with: request) { [weak self] data, response, error in
-            DispatchQueue.main.async {
-                self?.task = nil
-                self?.lastCode = nil
-                
-                if let error = error {
-                    print("❌ Ошибка сети: \(error.localizedDescription)")
-                    completion(.failure(error))
-                    return
-                }
-                
-                guard let httpResponse = response as? HTTPURLResponse else {
-                    print("❌ Ошибка: некорректный ответ от сервера")
-                    completion(.failure(NSError(domain: "OAuth2Service", code: -2, userInfo: [NSLocalizedDescriptionKey: "Некорректный ответ от сервера"])))
-                    return
-                }
-                
-                guard (200...299).contains(httpResponse.statusCode) else {
-                    print("❌ Ошибка: сервер вернул код ответа \(httpResponse.statusCode)")
-                    completion(.failure(NSError(domain: "OAuth2Service", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: "Ошибка сервера"])))
-                    return
-                }
-                
-                guard let data = data else {
-                    print("❌ Ошибка: пустой ответ от сервера")
-                    completion(.failure(NSError(domain: "OAuth2Service", code: -3, userInfo: [NSLocalizedDescriptionKey: "Пустой ответ от сервера"])))
-                    return
-                }
-                
-                do {
-                    let decoder = SnakeCaseJSONDecoder()
-                    let response = try decoder.decode(OAuthTokenResponseBody.self, from: data)
-                    let token = response.accessToken
-                    self?.storage.token = token
-                    print("✅ Токен успешно получен и сохранён: \(token)")
-                    completion(.success(token))
-                } catch {
-                    print("❌ Ошибка декодирования JSON: \(error.localizedDescription)")
-                    completion(.failure(error))
-                }
+        let task = urlSession.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+            self?.task = nil
+            self?.lastCode = nil
+            
+            switch result {
+            case .success(let response):
+                let token = response.accessToken
+                self?.storage.token = token
+                print("✅ Токен успешно получен и сохранён: \(token)")
+                completion(.success(token))
+            case .failure(let error):
+                print("❌ Ошибка при получении токена: \(error.localizedDescription)")
+                completion(.failure(error))
             }
         }
         
-        self.task = task
         task.resume()
     }
-    
+
     // MARK: - Private Methods
     private func makeOAuthTokenRequest(code: String) -> URLRequest? {
         guard let url = URL(string: "https://unsplash.com/oauth/token"

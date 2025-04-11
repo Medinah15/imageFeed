@@ -47,12 +47,16 @@ final class SplashViewController: UIViewController {
                 
                 ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { _ in
                 }
-                    
-            case .failure:
-                // Здесь покажите ошибку получения профиля
-                break
+            case .failure(let error):
+                        self.showErrorAlert(error.localizedDescription)
             }
         }
+    }
+    
+    private func showErrorAlert(_ message: String) {
+        let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true, completion: nil)
     }
     
     private func switchToTabBarController() {
@@ -68,7 +72,6 @@ final class SplashViewController: UIViewController {
     }
 }
 
-
 // MARK: - Navigation
 extension SplashViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -80,7 +83,6 @@ extension SplashViewController {
             super.prepare(for: segue, sender: sender)
             return
         }
-        
         viewController.delegate = self
     }
 }
@@ -90,7 +92,7 @@ extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
         dismiss(animated: true) { [weak self] in
             guard let self = self else { return }
-            self.fetchProfile(code) // Отправляем запрос после авторизации
+            self.fetchProfile(code)
         }
     }
 }
