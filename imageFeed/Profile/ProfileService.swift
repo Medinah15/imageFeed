@@ -11,38 +11,39 @@ final class ProfileService {
     
     // MARK: - Singleton
     static let shared = ProfileService()
-    private let urlSession = URLSession.shared
+    private let networkService: NetworkServiceProtocol
     private(set) var profile: Profile?
     
-    private init() {}
-    
+    private init(networkService: NetworkServiceProtocol = NetworkService()) {
+        self.networkService = networkService
+    }
+
     // MARK: - Public Methods
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
         guard let request = makeProfileRequest(token: token) else {
-            completion(.failure(ProfileServiceError.invalidRequest))
+            let error = ProfileServiceError.invalidRequest
+            logError(method: "fetchProfile", error: error, additionalInfo: "Failed to create request with token: \(token)")
+            completion(.failure(error))
             return
         }
         
-        let task = urlSession.objectTask(for: request) { [weak self] (result: Result<ProfileResult, Error>) in
+        networkService.objectTask(for: request) { [weak self] (result: Result<ProfileResult, Error>) in
             switch result {
             case .success(let profileResult):
                 let profile = Profile(from: profileResult)
                 self?.profile = profile
                 completion(.success(profile))
             case .failure(let error):
-                print("❌ Ошибка при получении профиля: \(error.localizedDescription)")
+                self?.logError(method: "fetchProfile", error: error, request: request)
                 completion(.failure(error))
             }
         }
-
-        
-        task.resume()
     }
     
     // MARK: - Private Methods
     private func makeProfileRequest(token: String) -> URLRequest? {
         guard let url = URL(string: "https://api.unsplash.com/me") else {
-            assertionFailure("Не удалось создать URL")
+            assertionFailure("[makeProfileRequest]: Не удалось создать URL")
             return nil
         }
         
@@ -50,6 +51,21 @@ final class ProfileService {
         request.httpMethod = "GET"
         request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         return request
+    }
+
+    // MARK: - Logging Errors
+    private func logError(method: String, error: Error, request: URLRequest? = nil, additionalInfo: String? = nil) {
+        var logMessage = "❌ [\(method)] - Ошибка: \(error.localizedDescription)"
+        
+        if let additionalInfo = additionalInfo {
+            logMessage += ", Info: \(additionalInfo)"
+        }
+        
+        if let request = request {
+            logMessage += ", Request: \(request)"
+        }
+        
+        print(logMessage)
     }
 }
 
@@ -80,4 +96,3 @@ struct Profile {
 enum ProfileServiceError: Error {
     case invalidRequest
 }
-

@@ -16,17 +16,22 @@ final class OAuth2Service {
     // MARK: - Singleton
     static let shared = OAuth2Service()
     private let storage = OAuth2TokenStorage()
-    private let urlSession = URLSession.shared
     private var task: URLSessionTask?
     private var lastCode: String?
-    private init() {}
+    private let networkService: NetworkServiceProtocol
+    
+    private init(networkService: NetworkServiceProtocol = NetworkService()) {
+        self.networkService = networkService
+    }
     
     // MARK: - Public Methods
     func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
         assert(Thread.isMainThread)
         
         guard lastCode != code else {
-            completion(.failure(AuthServiceError.invalidRequest))
+            let error = AuthServiceError.invalidRequest
+            logError(method: "fetchOAuthToken", error: error, additionalInfo: "Code: \(code)")
+            completion(.failure(error))
             return
         }
         
@@ -34,11 +39,13 @@ final class OAuth2Service {
         lastCode = code
         
         guard let request = makeOAuthTokenRequest(code: code) else {
-            completion(.failure(AuthServiceError.invalidRequest))
+            let error = AuthServiceError.invalidRequest
+            logError(method: "fetchOAuthToken", error: error, additionalInfo: "Failed to create request, Code: \(code)")
+            completion(.failure(error))
             return
         }
         
-        let task = urlSession.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+        task = networkService.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
             self?.task = nil
             self?.lastCode = nil
             
@@ -46,15 +53,13 @@ final class OAuth2Service {
             case .success(let response):
                 let token = response.accessToken
                 self?.storage.token = token
-                print("✅ Токен успешно получен и сохранён: \(token)")
+                print("✅ [fetchOAuthToken]: Токен успешно получен и сохранён: \(token)")
                 completion(.success(token))
             case .failure(let error):
-                print("❌ Ошибка при получении токена: \(error.localizedDescription)")
+                self?.logError(method: "fetchOAuthToken", error: error, request: request)
                 completion(.failure(error))
             }
         }
-        
-        task.resume()
     }
 
     // MARK: - Private Methods
@@ -65,16 +70,28 @@ final class OAuth2Service {
                             + "&redirect_uri=\(Constants.redirectURI)"
                             + "&code=\(code)"
                             + "&grant_type=authorization_code") else {
-            assertionFailure("Не удалось создать URL")
+            assertionFailure("[makeOAuthTokenRequest]: Не удалось создать URL")
             return nil
         }
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         return request
     }
+
+    // MARK: - Logging Errors
+    private func logError(method: String, error: Error, request: URLRequest? = nil, additionalInfo: String? = nil) {
+        var logMessage = "❌ [\(method)] - Ошибка: \(error.localizedDescription)"
+        
+        if let additionalInfo = additionalInfo {
+            logMessage += ", Info: \(additionalInfo)"
+        }
+        
+        if let request = request {
+            logMessage += ", Request: \(request)"
+        }
+        
+        print(logMessage)
+    }
 }
 
-// MARK: - OAuthTokenResponse
-struct OAuthTokenResponse: Codable {
-    let accessToken: String
-}

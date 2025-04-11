@@ -6,12 +6,6 @@
 
 import Foundation
 
-enum NetworkError: Error {
-    case httpStatusCode(Int)
-    case urlRequestError(Error)
-    case urlSessionError
-}
-
 extension URLSession {
     func data(
         for request: URLRequest,
@@ -28,40 +22,22 @@ extension URLSession {
                 if 200 ..< 300 ~= statusCode {
                     fulfillCompletionOnTheMainThread(.success(data))
                 } else {
-                    fulfillCompletionOnTheMainThread(.failure(NetworkError.httpStatusCode(statusCode)))
+                    let error = NetworkError.httpStatusCode(statusCode)
+                    print("[data(for:)]: \(error) - StatusCode: \(statusCode), Request: \(request)")
+                    fulfillCompletionOnTheMainThread(.failure(error))
                 }
             } else if let error = error {
-                fulfillCompletionOnTheMainThread(.failure(NetworkError.urlRequestError(error)))
+                let networkError = NetworkError.urlRequestError(error)
+                print("[data(for:)]: \(networkError) - Error: \(error.localizedDescription), Request: \(request)")
+                fulfillCompletionOnTheMainThread(.failure(networkError))
             } else {
-                fulfillCompletionOnTheMainThread(.failure(NetworkError.urlSessionError))
+                let networkError = NetworkError.urlSessionError
+                print("[data(for:)]: \(networkError) - No data or response, Request: \(request)")
+                fulfillCompletionOnTheMainThread(.failure(networkError))
             }
         })
         
+        task.resume()
         return task
     }
-    
-       func objectTask<T: Decodable>(
-           for request: URLRequest,
-           completion: @escaping (Result<T, Error>) -> Void
-       ) -> URLSessionTask {
-           let decoder = JSONDecoder()
-           decoder.keyDecodingStrategy = .convertFromSnakeCase
-
-           let task = data(for: request) { result in
-               switch result {
-               case .success(let data):
-                   do {
-                       let decodedObject = try decoder.decode(T.self, from: data)
-                       completion(.success(decodedObject))
-                   } catch {
-                       print("❌ Ошибка декодирования JSON: \(error.localizedDescription)")
-                       completion(.failure(error))
-                   }
-               case .failure(let error):
-                   completion(.failure(error))
-               }
-           }
-
-           return task
-       }
-   }
+}
