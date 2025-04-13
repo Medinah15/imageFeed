@@ -5,6 +5,8 @@
 //  Created by Medina Huseynova on 07.02.25.
 
 import UIKit
+import Kingfisher
+
 
 final class ProfileViewController: UIViewController {
     
@@ -35,13 +37,19 @@ final class ProfileViewController: UIViewController {
                 updateAvatar()
     }
     
-    private func updateAvatar() { 
-            guard
-                let profileImageURL = ProfileImageService.shared.avatarURL,
-                let url = URL(string: profileImageURL)
-            else { return }
-            // TODO [Sprint 11] Обновить аватар, используя Kingfisher
-        }
+    private func updateAvatar() {
+        guard
+            let profileImageURL = ProfileImageService.shared.avatarURL,
+            let url = URL(string: profileImageURL)
+        else { return }
+
+        imageView.kf.setImage(
+            with: url,
+            placeholder: UIImage(named: "avatar"),
+            options: [.transition(.fade(0.3))]
+        )
+    }
+
         
     
     // MARK: - Setup UI
