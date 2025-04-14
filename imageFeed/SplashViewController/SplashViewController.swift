@@ -14,13 +14,14 @@ final class SplashViewController: UIViewController {
     private let oauth2TokenStorage = OAuth2TokenStorage()
     
     // MARK: - Lifecycle
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         if let token = oauth2TokenStorage.token {
             fetchProfile(token)
         } else {
-            performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: nil)
+            showAuthController()
         }
     }
     
@@ -31,6 +32,26 @@ final class SplashViewController: UIViewController {
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
+    }
+    
+    // MARK: - View Setup
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupUI()
+    }
+    
+    private func setupUI() {
+        view.backgroundColor = .black
+        
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "splash_screen_logo")
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(imageView)
+        
+        NSLayoutConstraint.activate([
+            imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
     }
     
     // MARK: - Private Methods
@@ -48,7 +69,7 @@ final class SplashViewController: UIViewController {
                 ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { _ in
                 }
             case .failure(let error):
-                        self.showErrorAlert(error.localizedDescription)
+                self.showErrorAlert(error.localizedDescription)
             }
         }
     }
@@ -70,22 +91,21 @@ final class SplashViewController: UIViewController {
         
         window.rootViewController = tabBarController
     }
-}
-
-// MARK: - Navigation
-extension SplashViewController {
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard
-            segue.identifier == showAuthenticationScreenSegueIdentifier,
-            let navigationController = segue.destination as? UINavigationController,
-            let viewController = navigationController.viewControllers.first as? AuthViewController
-        else {
-            super.prepare(for: segue, sender: sender)
+    
+    private func showAuthController() {
+        let storyboard = UIStoryboard(name: "Main", bundle: .main)
+        guard let authViewController = storyboard.instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController else {
+            assertionFailure("Не удалось создать AuthViewController из storyboard")
             return
         }
-        viewController.delegate = self
+        
+        authViewController.delegate = self
+        let navigationController = UINavigationController(rootViewController: authViewController)
+        navigationController.modalPresentationStyle = .fullScreen
+        present(navigationController, animated: true)
     }
 }
+
 
 // MARK: - AuthViewControllerDelegate
 extension SplashViewController: AuthViewControllerDelegate {

@@ -13,6 +13,7 @@
 		8B010D2A2DA968810040A4FC /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B010D292DA968810040A4FC /* NetworkService.swift */; };
 		8B010D2D2DA9E5050040A4FC /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 8B010D2C2DA9E5050040A4FC /* Kingfisher */; };
 		8B010D302DAA65E70040A4FC /* SwiftKeychainWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = 8B010D2F2DAA65E70040A4FC /* SwiftKeychainWrapper */; };
+		8B010D322DAD1D5F0040A4FC /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B010D312DAD1D5F0040A4FC /* TabBarController.swift */; };
 		8B0B7FC32D57EF7D002541CA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8B713F052D366CED0012AC23 /* Main.storyboard */; };
 		8B470F352D47CE3F008D8A07 /* ImagesListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B470F342D47CE3F008D8A07 /* ImagesListCell.swift */; };
 		8B470F412D55E93B008D8A07 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B470F402D55E93B008D8A07 /* ProfileViewController.swift */; };
@@ -39,6 +40,7 @@
 		8B010D252DA4F2120040A4FC /* ProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileService.swift; sourceTree = "<group>"; };
 		8B010D272DA705670040A4FC /* ProfileImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageService.swift; sourceTree = "<group>"; };
 		8B010D292DA968810040A4FC /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
+		8B010D312DAD1D5F0040A4FC /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		8B470F342D47CE3F008D8A07 /* ImagesListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListCell.swift; sourceTree = "<group>"; };
 		8B470F402D55E93B008D8A07 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		8B4F42382D5CF47600FF5892 /* SingleImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleImageViewController.swift; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 				8BEF23422D6721F1004CDD81 /* Constants.swift */,
 				8B010D192D8B45690040A4FC /* UIBlockingProgressHUD.swift */,
 				8B010D292DA968810040A4FC /* NetworkService.swift */,
+				8B010D312DAD1D5F0040A4FC /* TabBarController.swift */,
 				8BD1361C2D79686E00ED0B4B /* SingleImageVieww */,
 				8BEF23462D673C46004CDD81 /* Auth */,
 				8BD1361A2D79675F00ED0B4B /* SplashViewController */,
@@ -262,6 +265,7 @@
 				8B010D282DA705670040A4FC /* ProfileImageService.swift in Sources */,
 				8BD136182D79672E00ED0B4B /* SplashViewController.swift in Sources */,
 				8BEF23452D673C1F004CDD81 /* AuthViewController.swift in Sources */,
+				8B010D322DAD1D5F0040A4FC /* TabBarController.swift in Sources */,
 				8BEF23432D6721F1004CDD81 /* Constants.swift in Sources */,
 				8B010D1A2D8B45690040A4FC /* UIBlockingProgressHUD.swift in Sources */,
 				8B4F42392D5CF47600FF5892 /* SingleImageViewController.swift in Sources */,
