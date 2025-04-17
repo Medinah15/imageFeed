@@ -19,7 +19,7 @@ protocol WebViewViewControllerDelegate: AnyObject {
 final class WebViewViewController: UIViewController {
     
     // MARK: - Private Properties
-        private var estimatedProgressObservation: NSKeyValueObservation?
+    private var estimatedProgressObservation: NSKeyValueObservation?
     
     // MARK: - Outlets
     @IBOutlet private var webView: WKWebView!
@@ -35,11 +35,11 @@ final class WebViewViewController: UIViewController {
         loadAuthView()
         
         estimatedProgressObservation = webView.observe(
-                    \.estimatedProgress,
-                    options: [],
-                    changeHandler: { [weak self] _, _ in
-                        self?.updateProgress()
-                    })
+            \.estimatedProgress,
+             options: [],
+             changeHandler: { [weak self] _, _ in
+                 self?.updateProgress()
+             })
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -104,7 +104,7 @@ extension WebViewViewController: WKNavigationDelegate {
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
         if let code = code(from: navigationAction) {
-            delegate?.webViewViewController(self, didAuthenticateWithCode: code)                   //2
+            delegate?.webViewViewController(self, didAuthenticateWithCode: code)
             decisionHandler(.cancel)
         } else {
             decisionHandler(.allow)

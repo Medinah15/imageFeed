@@ -15,7 +15,7 @@ final class OAuth2Service {
     
     // MARK: - Singleton
     static let shared = OAuth2Service()
-    private let storage = OAuth2TokenStorage()
+    private let storage = OAuth2TokenStorage.shared
     private var task: URLSessionTask?
     private var lastCode: String?
     private let networkService: NetworkServiceProtocol
@@ -61,7 +61,7 @@ final class OAuth2Service {
             }
         }
     }
-
+    
     // MARK: - Private Methods
     private func makeOAuthTokenRequest(code: String) -> URLRequest? {
         guard let url = URL(string: "https://unsplash.com/oauth/token"
@@ -78,7 +78,7 @@ final class OAuth2Service {
         request.httpMethod = "POST"
         return request
     }
-
+    
     // MARK: - Logging Errors
     private func logError(method: String, error: Error, request: URLRequest? = nil, additionalInfo: String? = nil) {
         var logMessage = "❌ [\(method)] - Ошибка: \(error.localizedDescription)"

@@ -17,7 +17,7 @@ final class ProfileService {
     private init(networkService: NetworkServiceProtocol = NetworkService()) {
         self.networkService = networkService
     }
-
+    
     // MARK: - Public Methods
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
         guard let request = makeProfileRequest(token: token) else {
@@ -52,7 +52,7 @@ final class ProfileService {
         request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         return request
     }
-
+    
     // MARK: - Logging Errors
     private func logError(method: String, error: Error, request: URLRequest? = nil, additionalInfo: String? = nil) {
         var logMessage = "❌ [\(method)] - Ошибка: \(error.localizedDescription)"
@@ -66,29 +66,6 @@ final class ProfileService {
         }
         
         print(logMessage)
-    }
-}
-
-// MARK: - ProfileResult
-struct ProfileResult: Codable {
-    let username: String
-    let firstName: String?
-    let lastName: String?
-    let bio: String?
-}
-
-// MARK: - Profile
-struct Profile {
-    let username: String
-    let name: String
-    let loginName: String
-    let bio: String?
-    
-    init(from result: ProfileResult) {
-        self.username = result.username
-        self.name = "\(result.firstName ?? "") \(result.lastName ?? "")".trimmingCharacters(in: .whitespaces)
-        self.loginName = "@\(result.username)"
-        self.bio = result.bio
     }
 }
 

@@ -32,12 +32,12 @@ final class ProfileImageService {
     private init(networkService: NetworkServiceProtocol = NetworkService()) {
         self.networkService = networkService
     }
-
+    
     // MARK: - Public Methods
     func fetchProfileImageURL(username: String, _ completion: @escaping (Result<String, Error>) -> Void) {
         currentTask?.cancel()
         
-        guard let token = OAuth2TokenStorage().token else {
+        guard let token = OAuth2TokenStorage.shared.token else {
             let error = ProfileImageServiceError.unauthorized
             logError(method: "fetchProfileImageURL", error: error, additionalInfo: "Token is missing")
             completion(.failure(error))
@@ -65,13 +65,13 @@ final class ProfileImageService {
             }
         }
     }
-
+    
     // MARK: - Private Methods
     private func makeRequest(for username: String, token: String) -> URLRequest {
         guard let url = URL(string: "https://api.unsplash.com/users/\(username)") else {
             fatalError("❌ [makeRequest]: Не удалось создать URL для пользователя: \(username)")
         }
-
+        
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
