@@ -52,6 +52,8 @@ final class ProfileViewController: UIViewController {
     
     // MARK: - Setup UI
     private func setupUI() {
+        view.backgroundColor = .black
+        
         let avatarImageView = UIImageView()
         avatarImageView.image = UIImage(named: "avatar")
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
