@@ -7,7 +7,6 @@
 import UIKit
 import Kingfisher
 
-
 final class ProfileViewController: UIViewController {
     
     // MARK: - UI Elements
@@ -45,7 +44,7 @@ final class ProfileViewController: UIViewController {
         
         avatarImageView.kf.setImage(
             with: url,
-            placeholder: UIImage(named: "avatar"),
+            placeholder: UIImage(),
             options: [.transition(.fade(0.3))]
         )
     }
@@ -54,8 +53,6 @@ final class ProfileViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .black
         
-        let avatarImageView = UIImageView()
-        avatarImageView.image = UIImage(named: "avatar")
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(avatarImageView)
         NSLayoutConstraint.activate([
@@ -65,8 +62,6 @@ final class ProfileViewController: UIViewController {
             avatarImageView.heightAnchor.constraint(equalToConstant: 70)
         ])
         
-        let nameLabel = UILabel()
-        nameLabel.text = "Екатерина Новикова"
         nameLabel.textColor = .white
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(nameLabel)
@@ -76,8 +71,6 @@ final class ProfileViewController: UIViewController {
             nameLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: 16)
         ])
         
-        let loginNameLabel = UILabel()
-        loginNameLabel.text = "@ekaterina_nov"
         loginNameLabel.textColor = .gray
         loginNameLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(loginNameLabel)
@@ -87,8 +80,6 @@ final class ProfileViewController: UIViewController {
             loginNameLabel.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor)
         ])
         
-        let  infoLabel = UILabel()
-        infoLabel.text = "Hello, World"
         infoLabel.textColor = .white
         infoLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview( infoLabel)
@@ -98,7 +89,6 @@ final class ProfileViewController: UIViewController {
             infoLabel.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor)
         ])
         
-        let logoutButton = UIButton()
         logoutButton.setImage(UIImage(named: "logout_button"), for: .normal)
         logoutButton.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
         logoutButton.translatesAutoresizingMaskIntoConstraints = false
