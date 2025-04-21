@@ -62,7 +62,11 @@ final class ProfileViewController: UIViewController {
             avatarImageView.heightAnchor.constraint(equalToConstant: 70)
         ])
         
-        nameLabel.textColor = .white
+        avatarImageView.layer.cornerRadius = 35
+        avatarImageView.clipsToBounds = true
+        
+        nameLabel.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+        nameLabel.font = UIFont.systemFont(ofSize: 23, weight: .bold)
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(nameLabel)
         NSLayoutConstraint.activate([
@@ -71,7 +75,8 @@ final class ProfileViewController: UIViewController {
             nameLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: 16)
         ])
         
-        loginNameLabel.textColor = .gray
+        loginNameLabel.textColor = UIColor(red: 174/255, green: 175/255, blue: 180/255, alpha: 1)
+        loginNameLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         loginNameLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(loginNameLabel)
         NSLayoutConstraint.activate([
@@ -80,7 +85,9 @@ final class ProfileViewController: UIViewController {
             loginNameLabel.trailingAnchor.constraint(equalTo: nameLabel.trailingAnchor)
         ])
         
-        infoLabel.textColor = .white
+        infoLabel.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+        infoLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        infoLabel.numberOfLines = 0
         infoLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview( infoLabel)
         NSLayoutConstraint.activate([
