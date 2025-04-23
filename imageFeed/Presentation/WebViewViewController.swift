@@ -40,17 +40,8 @@ final class WebViewViewController: UIViewController {
              changeHandler: { [weak self] _, _ in
                  self?.updateProgress()
              })
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
         
         updateProgress()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        estimatedProgressObservation = nil
     }
     
     // MARK: - Private Methods

@@ -41,7 +41,7 @@ final class SplashViewController: UIViewController {
     }
     
     private func setupUI() {
-        view.backgroundColor = .black
+        view.backgroundColor = UIColor(red: 26/255, green: 27/255, blue: 34/255, alpha: 1)
         
         let imageView = UIImageView()
         imageView.image = UIImage(named: "splash_screen_logo")

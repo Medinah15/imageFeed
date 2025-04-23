@@ -9,7 +9,8 @@ import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
-    // MARK: - UI Elements
+    // MARK: - Private Properties
+    
     private let avatarImageView = UIImageView()
     private let nameLabel = UILabel()
     private let loginNameLabel = UILabel()
@@ -17,6 +18,8 @@ final class ProfileViewController: UIViewController {
     private let logoutButton = UIButton()
     private let profileService = ProfileService.shared
     private var profileImageServiceObserver: NSObjectProtocol?
+    
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,24 +39,42 @@ final class ProfileViewController: UIViewController {
         updateAvatar()
     }
     
+    // MARK: - Private Methods
+    
     private func updateAvatar() {
         guard
-            let profileImageURL = ProfileImageService.shared.avatarURL,
-            let url = URL(string: profileImageURL)
+            let profileImageURL = ProfileImageService.shared.avatarURL
         else { return }
-        
-        avatarImageView.kf.setImage(
-            with: url,
-            placeholder: UIImage(),
-            options: [.transition(.fade(0.3))]
-        )
+        //       https://images.unsplash.com/profile-1745424847523-b33e47391d28image?ixlib=rb-4.0.3&crop=faces&fit=crop&w=32&h=32
+        if var components = URLComponents(string: profileImageURL) {
+            
+            components.queryItems = components.queryItems?.filter {
+                !["crop", "fit", "w", "h"].contains($0.name)
+            }
+            
+            let newParams: [URLQueryItem] = [
+                URLQueryItem(name: "crop", value: "faces"),
+                URLQueryItem(name: "w", value: "150"),
+                URLQueryItem(name: "h", value: "150")
+            ]
+            
+            components.queryItems?.append(contentsOf: newParams)
+            
+            let newURL = components.url
+            //            https://images.unsplash.com/profile-1745424847523-b33e47391d28image?ixlib=rb-4.0.3&crop=faces&w=140&h=140
+            
+            avatarImageView.kf.setImage(
+                with: newURL,
+                options: [.transition(.fade(0.3))]
+            )
+        }
     }
     
-    // MARK: - Setup UI
     private func setupUI() {
-        view.backgroundColor = .black
+        view.backgroundColor = UIColor(red: 26/255, green: 27/255, blue: 34/255, alpha: 1)
         
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
+        avatarImageView.contentMode = .scaleAspectFill
         view.addSubview(avatarImageView)
         NSLayoutConstraint.activate([
             avatarImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
@@ -103,12 +124,11 @@ final class ProfileViewController: UIViewController {
         NSLayoutConstraint.activate([
             logoutButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             logoutButton.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
-            logoutButton.widthAnchor.constraint(equalToConstant: 44),
-            logoutButton.heightAnchor.constraint(equalToConstant: 44)
+            logoutButton.widthAnchor.constraint(equalToConstant: 24),
+            logoutButton.heightAnchor.constraint(equalToConstant: 24)
         ])
     }
     
-    // MARK: - Update Profile Details
     private func updateProfileDetails(profile: Profile?) {
         guard let profile = profile else {
             print("❌ Профиль не найден")
@@ -119,6 +139,8 @@ final class ProfileViewController: UIViewController {
         loginNameLabel.text = profile.loginName
         infoLabel.text = profile.bio
     }
+    
+    // MARK: - Actions
     
     @objc func didTapButton() {
         print("Выход из профиля")
