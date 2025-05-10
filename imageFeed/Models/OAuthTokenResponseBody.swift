@@ -3,7 +3,7 @@
 //  imageFeed
 //
 //  Created by Medina Huseynova on 06.03.25.
-//
+
 import Foundation
 
 struct OAuthTokenResponseBody: Decodable {
@@ -16,5 +16,3 @@ class SnakeCaseJSONDecoder: JSONDecoder {
         keyDecodingStrategy = .convertFromSnakeCase
     }
 }
-
-

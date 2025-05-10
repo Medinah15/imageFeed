@@ -3,7 +3,6 @@
 //  imageFeed
 //
 //  Created by Medina Huseynova on 27.01.25.
-//
 
 import UIKit
 
@@ -18,5 +17,4 @@ final class ImagesListCell: UITableViewCell {
     @IBOutlet var cellImage: UIImageView!
     @IBOutlet var likeButton: UIButton!
     @IBOutlet var dateLabel: UILabel!
-    
 }
