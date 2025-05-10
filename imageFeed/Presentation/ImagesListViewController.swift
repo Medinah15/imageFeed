@@ -10,6 +10,8 @@ import ProgressHUD
 
 final class ImagesListViewController: UIViewController {
     var fullImageURL: String!
+
+    // MARK: - Private Properties
     
     private let showSingleImageSegueIdentifier = "ShowSingleImage"
     @IBOutlet private var tableView: UITableView!
