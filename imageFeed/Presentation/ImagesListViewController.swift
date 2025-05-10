@@ -5,8 +5,12 @@
 //  Created by Medina Huseynova on 14.01.25.
 
 import UIKit
+import Kingfisher
+import ProgressHUD
 
 final class ImagesListViewController: UIViewController {
+    var fullImageURL: String!
+    
     private let showSingleImageSegueIdentifier = "ShowSingleImage"
     @IBOutlet private var tableView: UITableView!
     
@@ -28,7 +32,7 @@ final class ImagesListViewController: UIViewController {
         
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(updateTableView),
+            selector: #selector(updateTableViewAnimated),
             name: ImagesListService.didChangeNotification,
             object: nil
         )
@@ -36,9 +40,27 @@ final class ImagesListViewController: UIViewController {
         service.fetchPhotosNextPage()
     }
     
-    @objc private func updateTableView() {
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+    
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: ImagesListService.didChangeNotification, object: nil)
+    }
+    
+    @objc func updateTableViewAnimated() {
+        let oldCount = photos.count
+        let newCount = service.photos.count
         photos = service.photos
-        tableView.reloadData()
+        if oldCount != newCount {
+            tableView.performBatchUpdates {
+                let indexPaths = (oldCount..<newCount).map { i in
+                    IndexPath(row: i, section: 0)
+                }
+                tableView.insertRows(at: indexPaths, with: .automatic)
+            } completion: { _ in }
+        }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -50,16 +72,7 @@ final class ImagesListViewController: UIViewController {
         }
         
         let photo = photos[indexPath.row]
-        if let url = URL(string: photo.largeImageURL) {
-            // Загрузка изображения по URL
-            let task = URLSession.shared.dataTask(with: url) { data, response, error in
-                guard let data = data, let image = UIImage(data: data) else { return }
-                DispatchQueue.main.async {
-                    viewController.image = image
-                }
-            }
-            task.resume()
-        }
+        viewController.fullImageURL = photo.largeImageURL
     }
 }
 
@@ -76,15 +89,15 @@ extension ImagesListViewController: UITableViewDataSource {
         }
         
         let photo = photos[indexPath.row]
+        cell.delegate = self
+        
         if let url = URL(string: photo.thumbImageURL) {
-            // Загрузка изображения по URL
-            let task = URLSession.shared.dataTask(with: url) { data, response, error in
-                guard let data = data, let image = UIImage(data: data) else { return }
-                DispatchQueue.main.async {
-                    cell.cellImage.image = image
-                }
-            }
-            task.resume()
+            cell.cellImage.kf.indicatorType = .activity
+            cell.cellImage.kf.setImage(
+                with: url,
+                placeholder: UIImage(named: "stub_placeholder"),
+                options: [.transition(.fade(0.3))]
+            )
         }
         
         if let date = photo.createdAt {
@@ -115,5 +128,53 @@ extension ImagesListViewController: UITableViewDelegate {
         let cellHeight = photo.size.height * scale + imageInsets.top + imageInsets.bottom
         return cellHeight
     }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        // Если ячейка последняя в таблице, загружаем следующую страницу
+        if indexPath.row == photos.count - 1 {
+            service.fetchPhotosNextPage()
+        }
+    }
 }
 
+// MARK: - ImagesListCellDelegate
+
+extension ImagesListViewController: ImagesListCellDelegate {
+    func imageListCellDidTapLike(_ cell: ImagesListCell) {
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
+        let photo = photos[indexPath.row]
+        
+        UIBlockingProgressHUD.show()
+        
+        service.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self = self else { return }
+                
+                switch result {
+                case .success:
+                    // Синхронизируем массив фото с сервисом
+                    self.photos = self.service.photos
+                    
+                    // Обновляем отображение лайка только у этой ячейки
+                    let newPhoto = self.photos[indexPath.row]
+                    cell.setIsLiked(newPhoto.isLiked)
+                    
+                    UIBlockingProgressHUD.dismiss()
+                    
+                case .failure:
+                    
+                    UIBlockingProgressHUD.dismiss()
+                    
+                    // Показываем алерт при ошибке
+                    let alert = UIAlertController(
+                        title: "Ошибка",
+                        message: "Не удалось поставить лайк. Попробуйте позже.",
+                        preferredStyle: .alert
+                    )
+                    alert.addAction(UIAlertAction(title: "ОК", style: .default))
+                    self.present(alert, animated: true)
+                }
+            }
+        }
+    }
+}

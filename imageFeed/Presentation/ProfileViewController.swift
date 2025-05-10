@@ -20,7 +20,7 @@ final class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+    
         setupUI()
         updateProfileDetails(profile: profileService.profile)
         
@@ -51,7 +51,7 @@ final class ProfileViewController: UIViewController {
     
     // MARK: - Setup UI
     private func setupUI() {
-        view.backgroundColor = .black
+        view.backgroundColor = UIColor(red: 26/255, green: 27/255, blue: 34/255, alpha: 1)
         
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(avatarImageView)
@@ -90,7 +90,7 @@ final class ProfileViewController: UIViewController {
         ])
         
         logoutButton.setImage(UIImage(named: "logout_button"), for: .normal)
-        logoutButton.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
+        logoutButton.addTarget(self, action: #selector(didTapLogoutButton), for: .touchUpInside)
         logoutButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(logoutButton)
         NSLayoutConstraint.activate([
@@ -113,8 +113,14 @@ final class ProfileViewController: UIViewController {
         infoLabel.text = profile.bio
     }
     
-    @objc func didTapButton() {
-        print("Выход из профиля")
+    @IBAction private func didTapLogoutButton(_ sender: UIButton) {
+        let alert = UIAlertController(title: "Выход", message: "Вы уверены, что хотите выйти?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Отмена", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Выйти", style: .destructive) { _ in
+            ProfileLogoutService.shared.logout()
+        })
+        present(alert, animated: true)
     }
+
 }
 

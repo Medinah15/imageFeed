@@ -6,14 +6,22 @@
 //
 
 import UIKit
+import ProgressHUD
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        return true
-    }
-    
+        
+        UITabBar.appearance().barTintColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.3)
+        
+        ProgressHUD.animationType = .activityIndicator
+               ProgressHUD.colorHUD = .black
+               ProgressHUD.colorAnimation = .lightGray
+               
+               return true
+           }
+        
     // MARK: UISceneSession Lifecycle
     
     func application(

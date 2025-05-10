@@ -13,6 +13,7 @@ enum NetworkError: Error {
     case urlRequestError(Error)
     case urlSessionError
     case decodingError(Error)
+    case invalidToken
 }
 
 // MARK: - NetworkServiceProtocol
