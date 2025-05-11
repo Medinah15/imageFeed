@@ -100,6 +100,7 @@ extension ImagesListViewController: UITableViewDataSource {
                 placeholder: UIImage(named: "stub_placeholder"),
                 options: [.transition(.fade(0.3))]
             )
+
         }
         
         if let date = photo.createdAt {
