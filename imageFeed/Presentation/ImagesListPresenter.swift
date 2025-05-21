@@ -7,14 +7,13 @@
 
 import Foundation
 
-protocol ImagesListPresenterProtocol: AnyObject {
+public protocol ImagesListPresenterProtocol: AnyObject {
     var photos: [Photo] { get }
     func viewDidLoad()
     func updateTableViewAnimated()
     func willDisplayCell(at indexPath: IndexPath)
     func didTapLike(at indexPath: IndexPath)
     func configure(_ cell: ImagesListCell, at indexPath: IndexPath)
-    
 }
 
 final class ImagesListPresenter: ImagesListPresenterProtocol {
@@ -69,7 +68,7 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
                 
                 switch result {
                 case .success:
-
+                    
                     self.photos = self.service.photos
                     
                     let newPhoto = self.photos[indexPath.row]
@@ -86,7 +85,7 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-
+    
     func configure(_ cell: ImagesListCell, at indexPath: IndexPath) {
         let photo = photos[indexPath.row]
         view?.configureCell(cell, with: photo, delegate: view as? ImagesListCellDelegate)// делегируем UI на ViewController

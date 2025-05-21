@@ -14,23 +14,22 @@ protocol ProfileViewControllerProtocol: AnyObject {
     func didTapLogoutButton(_ sender: UIButton)
     func showLogoutAlert()
     func switchToAuthScreen()
-    
 }
 
 final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
     
     // MARK: - UI
     
-    private let avatarImageView = UIImageView()
-    private let nameLabel = UILabel()
-    private let loginNameLabel = UILabel()
-    private let infoLabel = UILabel()
-    private let logoutButton = UIButton()
+    let avatarImageView = UIImageView()
+    let nameLabel = UILabel()
+    let loginNameLabel = UILabel()
+    let infoLabel = UILabel()
+    let logoutButton = UIButton()
     
     // MARK: - Properties
     
     var presenter: ProfilePresenterProtocol?
-    
+    var logoutConfirmationHandler: (() -> Void)?
     
     // MARK: - Lifecycle
     
@@ -131,7 +130,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         )
         alert.addAction(UIAlertAction(title: "Отмена", style: .cancel))
         alert.addAction(UIAlertAction(title: "Выйти", style: .destructive) { _ in
-            self.presenter?.confirmLogout()
+            self.logoutConfirmationHandler?() ?? self.presenter?.confirmLogout()
         })
         present(alert, animated: true)
     }
@@ -153,3 +152,4 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         window.makeKeyAndVisible()
     }
 }
+

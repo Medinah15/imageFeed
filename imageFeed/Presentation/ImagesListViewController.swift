@@ -8,7 +8,8 @@ import UIKit
 import Kingfisher
 import ProgressHUD
 
-protocol ImagesListViewControllerProtocol: AnyObject {
+public protocol ImagesListViewControllerProtocol: AnyObject {
+    var presenter: ImagesListPresenterProtocol? { get set }
     func insertRows(at indexPaths: [IndexPath])
     func updateLikeButton(at indexPath: IndexPath, isLiked: Bool)
     func showLikeErrorAlert()
@@ -22,16 +23,16 @@ final class ImagesListViewController: UIViewController & ImagesListViewControlle
     private let showSingleImageSegueIdentifier = "ShowSingleImage"
     @IBOutlet private var tableView: UITableView!
     
-    private var presenter: ImagesListPresenterProtocol!
+    var presenter: ImagesListPresenterProtocol?
     private let helper: ImagesListHelperProtocol = ImagesListHelper()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter = ImagesListPresenter(view: self, helper: ImagesListHelper())
+        
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
         tableView.dataSource = self
         tableView.delegate = self
-        presenter.viewDidLoad()
+        presenter?.viewDidLoad()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -42,8 +43,8 @@ final class ImagesListViewController: UIViewController & ImagesListViewControlle
             return
         }
         
-        let photo = presenter.photos[indexPath.row]
-        viewController.fullImageURL = photo.largeImageURL
+        let photo = presenter?.photos[indexPath.row]
+        viewController.fullImageURL = photo?.largeImageURL
     }
     
     // MARK: - ImagesListViewControllerProtocol
@@ -94,7 +95,7 @@ final class ImagesListViewController: UIViewController & ImagesListViewControlle
 
 extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        presenter.photos.count
+        presenter?.photos.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -102,7 +103,7 @@ extension ImagesListViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         
-        presenter.configure(cell, at: indexPath)
+        presenter?.configure(cell, at: indexPath)
         return cell
     }
 }
@@ -115,7 +116,7 @@ extension ImagesListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let photo = presenter.photos[indexPath.row]
+        guard let photo = presenter?.photos[indexPath.row] else { return 0 }
         let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
         let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
         let scale = imageViewWidth / photo.size.width
@@ -124,7 +125,7 @@ extension ImagesListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        presenter.willDisplayCell(at: indexPath)
+        presenter?.willDisplayCell(at: indexPath)
     }
 }
 
@@ -133,6 +134,6 @@ extension ImagesListViewController: UITableViewDelegate {
 extension ImagesListViewController: ImagesListCellDelegate {
     func imageListCellDidTapLike(_ cell: ImagesListCell) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
-        presenter.didTapLike(at: indexPath)
+        presenter?.didTapLike(at: indexPath)
     }
 }
