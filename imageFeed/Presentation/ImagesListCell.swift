@@ -32,8 +32,8 @@ final class ImagesListCell: UITableViewCell {
     // MARK: - Lifecycle
     override func prepareForReuse() {
         super.prepareForReuse()
-        cellImage.kf.cancelDownloadTask() // отменяет загрузку
-        cellImage.image = nil              // сбрасывает текущее изображение
+        cellImage.kf.cancelDownloadTask() 
+        cellImage.image = nil
         likeButton.setImage(nil, for: .normal)
         dateLabel.text = nil
     }

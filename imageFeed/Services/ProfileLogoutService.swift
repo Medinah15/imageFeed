@@ -46,5 +46,3 @@ final class ProfileLogoutService {
         window.rootViewController = splashViewController
     }
 }
-
-    

@@ -7,17 +7,30 @@
 import UIKit
 import Kingfisher
 
-final class ProfileViewController: UIViewController {
+protocol ProfileViewControllerProtocol: AnyObject {
+    var presenter: ProfilePresenterProtocol? { get set }
+    func updateProfileDetails(profile: Profile?)
+    func updateAvatar(url: URL)
+    func didTapLogoutButton(_ sender: UIButton)
+    func showLogoutAlert()
+    func switchToAuthScreen()
     
-    // MARK: - Private Properties
+}
+
+final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
+    
+    // MARK: - UI
     
     private let avatarImageView = UIImageView()
     private let nameLabel = UILabel()
     private let loginNameLabel = UILabel()
     private let infoLabel = UILabel()
     private let logoutButton = UIButton()
-    private let profileService = ProfileService.shared
-    private var profileImageServiceObserver: NSObjectProtocol?
+    
+    // MARK: - Properties
+    
+    var presenter: ProfilePresenterProtocol?
+    
     
     // MARK: - Lifecycle
     
@@ -25,50 +38,10 @@ final class ProfileViewController: UIViewController {
         super.viewDidLoad()
         
         setupUI()
-        updateProfileDetails(profile: profileService.profile)
-        
-        profileImageServiceObserver = NotificationCenter.default
-            .addObserver(
-                forName: ProfileImageService.didChangeNotification,
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
-                guard let self = self else { return }
-                self.updateAvatar()
-            }
-        updateAvatar()
+        presenter?.viewDidLoad()
     }
     
-    // MARK: - Private Methods
-    
-    private func updateAvatar() {
-        guard
-            let profileImageURL = ProfileImageService.shared.avatarURL
-        else { return }
-        //       https://images.unsplash.com/profile-1745424847523-b33e47391d28image?ixlib=rb-4.0.3&crop=faces&fit=crop&w=32&h=32
-        if var components = URLComponents(string: profileImageURL) {
-            
-            components.queryItems = components.queryItems?.filter {
-                !["crop", "fit", "w", "h"].contains($0.name)
-            }
-            
-            let newParams: [URLQueryItem] = [
-                URLQueryItem(name: "crop", value: "faces"),
-                URLQueryItem(name: "w", value: "150"),
-                URLQueryItem(name: "h", value: "150")
-            ]
-            
-            components.queryItems?.append(contentsOf: newParams)
-            
-            let newURL = components.url
-            //            https://images.unsplash.com/profile-1745424847523-b33e47391d28image?ixlib=rb-4.0.3&crop=faces&w=140&h=140
-            
-            avatarImageView.kf.setImage(
-                with: newURL,
-                options: [.transition(.fade(0.3))]
-            )
-        }
-    }
+    // MARK: - UI Setup
     
     private func setupUI() {
         view.backgroundColor = UIColor(red: 26/255, green: 27/255, blue: 34/255, alpha: 1)
@@ -129,7 +102,7 @@ final class ProfileViewController: UIViewController {
         ])
     }
     
-    private func updateProfileDetails(profile: Profile?) {
+    internal func updateProfileDetails(profile: Profile?) {
         guard let profile = profile else {
             print("❌ Профиль не найден")
             return
@@ -140,16 +113,43 @@ final class ProfileViewController: UIViewController {
         infoLabel.text = profile.bio
     }
     
+    func updateAvatar(url: URL) {
+        avatarImageView.kf.setImage(with: url, options: [.transition(.fade(0.3))])
+    }
+    
     // MARK: - Actions
     
-    @IBAction private func didTapLogoutButton(_ sender: UIButton) {
-        let alert = UIAlertController(title: "Выход", message: "Вы уверены, что хотите выйти?", preferredStyle: .alert)
+    @objc func didTapLogoutButton(_ sender: UIButton) {
+        presenter?.didTapLogout()
+    }
+    
+    func showLogoutAlert() {
+        let alert = UIAlertController(
+            title: "Выход",
+            message: "Вы уверены, что хотите выйти?",
+            preferredStyle: .alert
+        )
         alert.addAction(UIAlertAction(title: "Отмена", style: .cancel))
         alert.addAction(UIAlertAction(title: "Выйти", style: .destructive) { _ in
-            ProfileLogoutService.shared.logout()
+            self.presenter?.confirmLogout()
         })
         present(alert, animated: true)
+    }
+    
+    func switchToAuthScreen() {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first else {
+            assertionFailure("Invalid window or scene configuration")
+            return
+        }
         
+        let storyboard = UIStoryboard(name: "Main", bundle: .main)
+        guard let splashVC = storyboard.instantiateViewController(withIdentifier: "SplashViewController") as? SplashViewController else {
+            assertionFailure("Не удалось создать SplashViewController из storyboard")
+            return
+        }
+        
+        window.rootViewController = splashVC
+        window.makeKeyAndVisible()
     }
 }
-

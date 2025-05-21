@@ -20,7 +20,6 @@ public protocol WebViewViewControllerProtocol: AnyObject {
     func setProgressHidden(_ isHidden: Bool)
 }
 
-
 // MARK: - WebViewViewController
 final class WebViewViewController: UIViewController & WebViewViewControllerProtocol {
     var presenter: WebViewPresenterProtocol?
@@ -43,10 +42,10 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
         
         estimatedProgressObservation = webView.observe(
             \.estimatedProgress,
-            options: [],
-            changeHandler: { [weak self] _, _ in
-                self?.presenter?.didUpdateProgressValue(self?.webView.estimatedProgress ?? 0)
-            })
+             options: [],
+             changeHandler: { [weak self] _, _ in
+                 self?.presenter?.didUpdateProgressValue(self?.webView.estimatedProgress ?? 0)
+             })
     }
     
     func load(request: URLRequest) {
