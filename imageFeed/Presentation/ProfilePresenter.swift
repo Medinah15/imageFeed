@@ -11,13 +11,13 @@ protocol ProfilePresenterProtocol: AnyObject {
     var view: ProfileViewControllerProtocol? { get set }
     func viewDidLoad()
     func updateAvatar()
-    func didTapLogout()
     func confirmLogout()
 }
 
 final class ProfilePresenter: ProfilePresenterProtocol {
     weak var view: ProfileViewControllerProtocol?
     private let profileService = ProfileService.shared
+    private let profileLogoutService = ProfileLogoutService.shared
     private var profileImageObserver: NSObjectProtocol?
     private let helper: ProfileHelperProtocol
     
@@ -48,16 +48,8 @@ final class ProfilePresenter: ProfilePresenterProtocol {
         }
     }
     
-    func didTapLogout() {
-        view?.showLogoutAlert()
-    }
-    
     func confirmLogout() {
-        helper.clearUserData()
-        // Переход к экрану авторизации
-        DispatchQueue.main.async {
-            self.view?.switchToAuthScreen()
-        }
+        profileLogoutService.logout()
     }
     
     deinit {

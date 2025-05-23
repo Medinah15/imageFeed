@@ -12,8 +12,6 @@ protocol ProfileViewControllerProtocol: AnyObject {
     func updateProfileDetails(profile: Profile?)
     func updateAvatar(url: URL)
     func didTapLogoutButton(_ sender: UIButton)
-    func showLogoutAlert()
-    func switchToAuthScreen()
 }
 
 final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
@@ -119,10 +117,6 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
     // MARK: - Actions
     
     @objc func didTapLogoutButton(_ sender: UIButton) {
-        presenter?.didTapLogout()
-    }
-    
-    func showLogoutAlert() {
         let alert = UIAlertController(
             title: "Выход",
             message: "Вы уверены, что хотите выйти?",
@@ -130,23 +124,9 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         )
         alert.addAction(UIAlertAction(title: "Отмена", style: .cancel))
         alert.addAction(UIAlertAction(title: "Выйти", style: .destructive) { _ in
-            self.logoutConfirmationHandler?() ?? self.presenter?.confirmLogout()
+            self.presenter?.confirmLogout()
         })
         present(alert, animated: true)
-    }
-    
-    func switchToAuthScreen() {
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = windowScene.windows.first else {
-            assertionFailure("Invalid window or scene configuration")
-            return
-        }
-        
-        let storyboard = UIStoryboard(name: "Main", bundle: .main)
-        let splashVC = SplashViewController()
-        
-        window.rootViewController = splashVC
-        window.makeKeyAndVisible()
     }
 }
 

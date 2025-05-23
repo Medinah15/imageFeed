@@ -9,7 +9,6 @@ import Foundation
 
 protocol ProfileHelperProtocol {
     func avatarURL(withBaseURL urlString: String?) -> URL?
-    func clearUserData()
 }
 
 final class ProfileHelper: ProfileHelperProtocol {
@@ -37,12 +36,6 @@ final class ProfileHelper: ProfileHelperProtocol {
         return components.url
     }
     
-    func clearUserData() {
-        OAuth2TokenStorage.shared.token = nil
-        HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
-        ProfileService.shared.reset()
-        ProfileImageService.shared.reset()
-        ImagesListService.shared.reset()
-    }
+   
 }
 

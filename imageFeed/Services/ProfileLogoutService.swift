@@ -22,7 +22,7 @@ final class ProfileLogoutService {
         OAuth2TokenStorage.shared.token = nil
         // Очищаем все куки из хранилища
         HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
-        URLCache.shared.removeAllCachedResponses()
+         URLCache.shared.removeAllCachedResponses()
         
         // 3. Сбросить сервисы
         ProfileService.shared.reset()
