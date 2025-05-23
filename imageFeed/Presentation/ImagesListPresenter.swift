@@ -63,21 +63,22 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
         UIBlockingProgressHUD.show()
         
         service.changeLike(photoId: photo.id, isLike: !photo.isLiked) { [weak self] result in
-            DispatchQueue.main.async {
                 guard let self = self else { return }
                 
                 switch result {
                 case .success:
-                    
-                    self.photos = self.service.photos
-                    
-                    let newPhoto = self.photos[indexPath.row]
-                    self.view?.updateLikeButton(at: indexPath, isLiked: newPhoto.isLiked)
-                    UIBlockingProgressHUD.dismiss()
+                    DispatchQueue.main.async {
+                        
+                        self.photos = self.service.photos
+                        
+                        let newPhoto = self.photos[indexPath.row]
+                        self.view?.updateLikeButton(at: indexPath, isLiked: newPhoto.isLiked)
+                        UIBlockingProgressHUD.dismiss()
+                    }
                 case .failure:
                     UIBlockingProgressHUD.dismiss()
                     self.view?.showLikeErrorAlert()
-                }
+                
             }
         }
     }

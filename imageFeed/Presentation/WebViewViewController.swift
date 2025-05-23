@@ -26,7 +26,7 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
     
     // MARK: - Private Properties
     private var estimatedProgressObservation: NSKeyValueObservation?
-    
+
     // MARK: - Outlets
     @IBOutlet private var webView: WKWebView!
     @IBOutlet private var progressView: UIProgressView!
@@ -37,6 +37,8 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("WebViewViewController loaded")
+
         webView.navigationDelegate = self
         presenter?.viewDidLoad()
         
@@ -44,8 +46,16 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
             \.estimatedProgress,
              options: [],
              changeHandler: { [weak self] _, _ in
-                 self?.presenter?.didUpdateProgressValue(self?.webView.estimatedProgress ?? 0)
+//                 self?.presenter?.didUpdateProgressValue(self?.webView.estimatedProgress ?? 0)
              })
+//        delegate?.webViewViewControllerDidCancel(self)
+
+        
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        estimatedProgressObservation = nil
     }
     
     func load(request: URLRequest) {
@@ -77,6 +87,8 @@ extension WebViewViewController: WKNavigationDelegate {
         decidePolicyFor navigationAction: WKNavigationAction,
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
+        
+        print("➡️ Navigation URL: \(navigationAction)")
         if let code = code(from: navigationAction) {
             delegate?.webViewViewController(self, didAuthenticateWithCode: code)
             decisionHandler(.cancel)

@@ -143,10 +143,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         }
         
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
-        guard let splashVC = storyboard.instantiateViewController(withIdentifier: "SplashViewController") as? SplashViewController else {
-            assertionFailure("Не удалось создать SplashViewController из storyboard")
-            return
-        }
+        let splashVC = SplashViewController()
         
         window.rootViewController = splashVC
         window.makeKeyAndVisible()

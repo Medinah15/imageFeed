@@ -44,5 +44,7 @@ final class ProfileLogoutService {
         
         let splashViewController = SplashViewController()
         window.rootViewController = splashViewController
+        window.makeKeyAndVisible()
+
     }
 }

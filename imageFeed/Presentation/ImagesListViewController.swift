@@ -29,6 +29,10 @@ final class ImagesListViewController: UIViewController & ImagesListViewControlle
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if presenter == nil {
+            presenter = ImagesListPresenter(view: self, helper: ImagesListHelper())
+        }
+        
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
         tableView.dataSource = self
         tableView.delegate = self

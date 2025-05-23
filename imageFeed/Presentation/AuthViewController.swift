@@ -66,27 +66,26 @@ final class AuthViewController: UIViewController {
 // MARK: - WebViewViewControllerDelegate
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        
-        UIBlockingProgressHUD.show()
-        oauth2Service.fetchOAuthToken(code) { [weak self] result in
-            DispatchQueue.main.async {
-                
-                UIBlockingProgressHUD.dismiss()
-                
-                switch result {
-                case .success(let token):
-                    print("✅ Авторизация успешна, токен: \(token)")
-                    if let self = self {
-                        self.delegate?.authViewController(self, didAuthenticateWithCode: token)
+        vc.dismiss(animated: true) {
+            UIBlockingProgressHUD.show()
+            self.oauth2Service.fetchOAuthToken(code) { [weak self] result in
+                DispatchQueue.main.async {
+                    guard let self = self else { return }
+
+                    UIBlockingProgressHUD.dismiss()
+                    
+                    switch result {
+                    case .success(let token):
+                        print("✅ Авторизация успешна, токен: \(token)")
+                            self.delegate?.authViewController(self, didAuthenticateWithCode: token)
+                    case .failure(let error):
+                        print("❌ Ошибка авторизации: \(error.localizedDescription)")
+                        self.showLoginErrorAlert()
                     }
-                case .failure(let error):
-                    print("❌ Ошибка авторизации: \(error.localizedDescription)")
-                    self?.showLoginErrorAlert()
                 }
             }
         }
     }
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
-        vc.dismiss(animated: true)
-    }
+        vc.dismiss(animated: true, completion: nil)    }
 }
