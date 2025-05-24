@@ -43,7 +43,7 @@ final class ProfileService {
     func reset() {
         self.profile = nil
     }
-
+    
     
     // MARK: - Private Methods
     private func makeProfileRequest(token: String) -> URLRequest? {

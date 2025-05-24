@@ -32,7 +32,7 @@ final class ImagesListService {
         isLoading = true
         
         let nextPage = (lastLoadedPage ?? 0) + 1
-
+        
         let urlString = "https://api.unsplash.com/photos?page=\(nextPage)&per_page=10&client_id=\(Constants.accessKey)"
         
         guard let url = URL(string: urlString) else {
@@ -41,18 +41,18 @@ final class ImagesListService {
             return
         }
         let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-                   defer { self?.isLoading = false }
-                   guard let self = self else { return }
-                   
-                   if let error = error {
-                       print("[fetchPhotosNextPage, ImagesListService]: [Network Error] error: \(error.localizedDescription)")
-                       return
-                   }
-                   
-                   guard let data = data else {
-                       print("[fetchPhotosNextPage, ImagesListService]: [No Data] response: \(String(describing: response))")
-                       return
-                   }
+            defer { self?.isLoading = false }
+            guard let self = self else { return }
+            
+            if let error = error {
+                print("[fetchPhotosNextPage, ImagesListService]: [Network Error] error: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let data = data else {
+                print("[fetchPhotosNextPage, ImagesListService]: [No Data] response: \(String(describing: response))")
+                return
+            }
             
             do {
                 let photoResults = try JSONDecoder().decode([PhotoResult].self, from: data)

@@ -27,12 +27,21 @@ final class AuthViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard segue.identifier == showWebViewSegueIdentifier,
-              let webViewViewController = segue.destination as? WebViewViewController else {
+        if segue.identifier == showWebViewSegueIdentifier {
+            guard
+                let webViewViewController = segue.destination as? WebViewViewController
+            else {
+                assertionFailure("Failed to prepare for \(showWebViewSegueIdentifier)")
+                return
+            }
+            let authHelper = AuthHelper()
+            let webViewPresenter = WebViewPresenter(authHelper: authHelper)
+            webViewViewController.presenter = webViewPresenter
+            webViewPresenter.view = webViewViewController
+            webViewViewController.delegate = self
+        } else {
             super.prepare(for: segue, sender: sender)
-            return
         }
-        webViewViewController.delegate = self
     }
     
     // MARK: - Private Methods
@@ -57,27 +66,26 @@ final class AuthViewController: UIViewController {
 // MARK: - WebViewViewControllerDelegate
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        
-        UIBlockingProgressHUD.show()
-        oauth2Service.fetchOAuthToken(code) { [weak self] result in
-            DispatchQueue.main.async {
-                
-                UIBlockingProgressHUD.dismiss()
-                
-                switch result {
-                case .success(let token):
-                    print("✅ Авторизация успешна, токен: \(token)")
-                    if let self = self {
-                        self.delegate?.authViewController(self, didAuthenticateWithCode: token)
+        vc.dismiss(animated: true) {
+            UIBlockingProgressHUD.show()
+            self.oauth2Service.fetchOAuthToken(code) { [weak self] result in
+                DispatchQueue.main.async {
+                    guard let self = self else { return }
+
+                    UIBlockingProgressHUD.dismiss()
+                    
+                    switch result {
+                    case .success(let token):
+                        print("✅ Авторизация успешна, токен: \(token)")
+                            self.delegate?.authViewController(self, didAuthenticateWithCode: token)
+                    case .failure(let error):
+                        print("❌ Ошибка авторизации: \(error.localizedDescription)")
+                        self.showLoginErrorAlert()
                     }
-                case .failure(let error):
-                    print("❌ Ошибка авторизации: \(error.localizedDescription)")
-                    self?.showLoginErrorAlert()
                 }
             }
         }
     }
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
-        vc.dismiss(animated: true)
-    }
+        vc.dismiss(animated: true, completion: nil)    }
 }

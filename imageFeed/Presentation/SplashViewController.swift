@@ -25,10 +25,10 @@ final class SplashViewController: UIViewController {
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setNeedsStatusBarAppearanceUpdate()
-    }
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        setNeedsStatusBarAppearanceUpdate()
+//    }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
@@ -58,9 +58,9 @@ final class SplashViewController: UIViewController {
     private func fetchProfile(_ token: String) {
         UIBlockingProgressHUD.show()
         ProfileService.shared.fetchProfile(token) { [weak self] result in
-            UIBlockingProgressHUD.dismiss()
             
             guard let self = self else { return }
+            UIBlockingProgressHUD.dismiss()
             
             switch result {
             case .success(let profile):
@@ -86,10 +86,12 @@ final class SplashViewController: UIViewController {
             return
         }
         
-        let tabBarController = UIStoryboard(name: "Main", bundle: .main)
-            .instantiateViewController(withIdentifier: "TabBarViewController")
-        
-        window.rootViewController = tabBarController
+        let storyboard = UIStoryboard(name: "Main", bundle: .main)
+        if let tabBarController = storyboard.instantiateViewController(withIdentifier: "TabBarViewController") as? TabBarController {
+            window.rootViewController = tabBarController
+        } else {
+            self.showAlert(with: "Ошибка", message: "Не удалось загрузить главный экран")
+        }
     }
     
     private func showAuthController() {
@@ -100,9 +102,15 @@ final class SplashViewController: UIViewController {
         }
         
         authViewController.delegate = self
-        let navigationController = UINavigationController(rootViewController: authViewController)
-        navigationController.modalPresentationStyle = .fullScreen
-        present(navigationController, animated: true)
+        //        let navigationController = UINavigationController(rootViewController: authViewController)
+        authViewController.modalPresentationStyle = .fullScreen
+        present(authViewController, animated: true)
+    }
+    
+    private func showAlert(with title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 }
 
