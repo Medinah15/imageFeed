@@ -8,7 +8,7 @@ import UIKit
 import Kingfisher
 import ProgressHUD
 
-public protocol ImagesListViewControllerProtocol: AnyObject {
+ public protocol ImagesListViewControllerProtocol: AnyObject {
     var presenter: ImagesListPresenterProtocol? { get set }
     func insertRows(at indexPaths: [IndexPath])
     func updateLikeButton(at indexPath: IndexPath, isLiked: Bool)

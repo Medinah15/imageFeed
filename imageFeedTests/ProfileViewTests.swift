@@ -58,10 +58,10 @@ final class ProfileViewTests: XCTestCase {
         _ = viewController.view
         
         // when
-        viewController.didTapLogoutButton(UIButton())
+        viewController.presenter?.confirmLogout()
         
         // then
-        XCTAssertTrue(presenter.didTapLogoutCalled)
+        XCTAssertTrue(presenter.confirmLogoutCalled)
     }
     
     

@@ -13,7 +13,7 @@ protocol WebViewViewControllerDelegate: AnyObject {
     func webViewViewControllerDidCancel(_ vc: WebViewViewController)
 }
 
-public protocol WebViewViewControllerProtocol: AnyObject {
+ public protocol WebViewViewControllerProtocol: AnyObject {
     var presenter: WebViewPresenterProtocol? { get set }
     func load(request: URLRequest)
     func setProgressValue(_ newValue: Float)
@@ -23,6 +23,7 @@ public protocol WebViewViewControllerProtocol: AnyObject {
 // MARK: - WebViewViewController
 final class WebViewViewController: UIViewController & WebViewViewControllerProtocol {
     var presenter: WebViewPresenterProtocol?
+    
     
     // MARK: - Private Properties
     private var estimatedProgressObservation: NSKeyValueObservation?
@@ -41,7 +42,8 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
 
         webView.navigationDelegate = self
         presenter?.viewDidLoad()
-        
+        webView.accessibilityIdentifier = "UnsplashWebView"
+
         estimatedProgressObservation = webView.observe(
             \.estimatedProgress,
              options: [],

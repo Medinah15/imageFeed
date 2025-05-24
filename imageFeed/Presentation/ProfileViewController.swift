@@ -11,7 +11,7 @@ protocol ProfileViewControllerProtocol: AnyObject {
     var presenter: ProfilePresenterProtocol? { get set }
     func updateProfileDetails(profile: Profile?)
     func updateAvatar(url: URL)
-    func didTapLogoutButton(_ sender: UIButton)
+    func showLogoutAlert()
 }
 
 final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
@@ -88,7 +88,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
         ])
         
         logoutButton.setImage(UIImage(named: "logout_button"), for: .normal)
-        logoutButton.addTarget(self, action: #selector(didTapLogoutButton), for: .touchUpInside)
+        logoutButton.addTarget(self, action: #selector(showLogoutAlert), for: .touchUpInside)
         logoutButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(logoutButton)
         NSLayoutConstraint.activate([
@@ -116,7 +116,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
     
     // MARK: - Actions
     
-    @objc func didTapLogoutButton(_ sender: UIButton) {
+    @objc func showLogoutAlert() {
         let alert = UIAlertController(
             title: "Выход",
             message: "Вы уверены, что хотите выйти?",
