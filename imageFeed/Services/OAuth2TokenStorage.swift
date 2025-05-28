@@ -19,15 +19,9 @@ final class OAuth2TokenStorage {
         }
         set {
             if let token = newValue {
-                let isSuccess = KeychainWrapper.standard.set(token, forKey: tokenKey)
-                if !isSuccess {
-                    print("❌ [OAuth2TokenStorage]: Не удалось сохранить токен в Keychain")
-                }
+                KeychainWrapper.standard.set(token, forKey: tokenKey)
             } else {
-                let isSuccess = KeychainWrapper.standard.removeObject(forKey: tokenKey)
-                if !isSuccess {
-                    print("⚠️ [OAuth2TokenStorage]: Не удалось удалить токен из Keychain")
-                }
+                KeychainWrapper.standard.removeObject(forKey: tokenKey)
             }
         }
     }

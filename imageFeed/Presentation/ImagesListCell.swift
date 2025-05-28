@@ -6,18 +6,17 @@
 
 import UIKit
 
-protocol ImagesListCellDelegate: AnyObject {
+public protocol ImagesListCellDelegate: AnyObject {
     func imageListCellDidTapLike(_ cell: ImagesListCell)
 }
 
-final class ImagesListCell: UITableViewCell {
+public final class ImagesListCell: UITableViewCell {
     
     // MARK: - Static properties
     static let reuseIdentifier = "ImagesListCell"
     
     // MARK: - Delegate
     weak var delegate: ImagesListCellDelegate?
-    
     
     // MARK: - @IBOutlet properties
     @IBOutlet var cellImage: UIImageView!
@@ -30,10 +29,10 @@ final class ImagesListCell: UITableViewCell {
     }
     
     // MARK: - Lifecycle
-    override func prepareForReuse() {
+    public override func prepareForReuse() {
         super.prepareForReuse()
-        cellImage.kf.cancelDownloadTask() // отменяет загрузку
-        cellImage.image = nil              // сбрасывает текущее изображение
+        cellImage.kf.cancelDownloadTask() 
+        cellImage.image = nil
         likeButton.setImage(nil, for: .normal)
         dateLabel.text = nil
     }
